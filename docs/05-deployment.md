@@ -39,3 +39,12 @@ Requires Node.js 20.9+ (tested on Node 24).
 - [ ] Investor PDFs migrated and spot-checked
 - [ ] Real plant photography swapped in for the AI visualisations (or the client approves them)
 - [ ] Google Search Console and analytics (if wanted) set up
+
+## Hostinger (Node.js web app)
+
+Hostinger's build servers run an older Linux (glibc < 2.29), so Next.js cannot load its native SWC compiler and falls back to the WebAssembly build. Two settings in this repo make that work:
+
+- The config is plain JavaScript: `next.config.mjs` (a `.ts` config needs SWC to load).
+- `npm run build` runs `next build --webpack` (Turbopack needs the native compiler).
+
+Hostinger settings: Node.js **20 or 22**, build command `npm run build`, start command `npm start`, output directory `.next`. Add the environment variables from `.env.example` in the Hostinger panel. The first build is slower (WASM compiler download, about 1–2 min extra).
