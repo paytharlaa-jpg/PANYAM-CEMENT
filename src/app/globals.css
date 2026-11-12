@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/* Motion variants follow html.reduce-motion (OS setting, overridable by the Motion toggle) */
+@custom-variant motion-safe (&:where(html:not(.reduce-motion), html:not(.reduce-motion) *));
+@custom-variant motion-reduce (&:where(html.reduce-motion, html.reduce-motion *));
+
+/* ------------------------------------------------------------------
+   Panyam Cement design tokens
+   Brand colours sampled from the official logo:
+   Panyam Green #00A85A · Panyam Yellow #FFF315
+------------------------------------------------------------------- */
+@theme {
+  --color-brand: #00a85a;          /* Primary brand green (logo) */
+  --color-brand-deep: #0a5c36;     /* Secondary green — text-safe on light */
+  --color-brand-night: #06261a;    /* Forest night — dark cinematic sections */
+  --color-brand-mint: #e3f4ea;     /* Tint for light panels */
+  --color-sun: #fff315;            /* Panyam Yellow (logo) — accent on dark/green only */
+  --color-kiln: #e8771e;           /* Kiln orange — warm accent, sparingly */
+  --color-charcoal: #1a1d1b;       /* Primary text / darkest neutral */
+  --color-slate: #4a514c;          /* Secondary text (8.2:1 on paper) */
+  --color-concrete: #8b918c;       /* Tertiary neutral / borders on dark */
+  --color-stone: #e4e1d8;          /* Lines and dividers on light */
+  --color-paper: #f6f4ee;          /* Off-white background */
+
+  --font-display: var(--font-archivo), "Arial Narrow", system-ui, sans-serif;
+  --font-sans: var(--font-manrope), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-instrument), Georgia, serif;
+
+  --breakpoint-sm: 40rem;   /* 640  */
+  --breakpoint-md: 48rem;   /* 768  */
+  --breakpoint-lg: 64rem;   /* 1024 */
+  --breakpoint-xl: 80rem;   /* 1280 */
+  --breakpoint-2xl: 96rem;  /* 1536 */
+
+  --ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-sun);
+    color: var(--color-charcoal);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-kiln);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  img, video, svg { max-width: 100%; }
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 88rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) { .container-x { padding-inline: 1.5rem; } }
+  @media (min-width: 1024px) { .container-x { padding-inline: 2.5rem; } }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .display-xl { font-size: clamp(2.75rem, 8.5vw, 8.5rem); font-weight: 800; font-stretch: 112%; }
+  .display-lg { font-size: clamp(2.25rem, 6vw, 5.5rem); font-weight: 800; font-stretch: 108%; }
+  .display-md { font-size: clamp(1.875rem, 4vw, 3.5rem); font-weight: 750; font-stretch: 104%; }
+  .story-italic { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+
+  /* Priya-style smooth hover: lifted card with light sweep */
+  .hover-lift {
+    transition: transform 0.6s var(--ease-out-expo), box-shadow 0.6s var(--ease-out-expo);
+  }
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px -25px rgb(6 38 26 / 0.45);
+  }
+  .sheen { position: relative; overflow: hidden; isolation: isolate; }
+  .sheen::after {
+    content: "";
+    position: absolute; inset: -50% auto -50% -60%;
+    width: 40%;
+    background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.35), transparent);
+    transform: skewX(-18deg) translateX(-100%);
+    transition: transform 0.9s var(--ease-out-expo);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .sheen:hover::after { transform: skewX(-18deg) translateX(420%); }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 2px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.45s var(--ease-out-expo);
+  }
+  .link-underline:hover, .link-underline:focus-visible { background-size: 100% 2px; }
+
+  .grain::before {
+    content: "";
+    position: absolute; inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index: 1;
+  }
+
+  .blueprint-grid {
+    background-image:
+      linear-gradient(rgb(0 168 90 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(0 168 90 / 0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .field {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 0.75rem;
+    border: 1.5px solid var(--color-stone);
+    background: #fff;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: var(--color-charcoal);
+    transition: border-color 0.2s var(--ease-ui), box-shadow 0.2s var(--ease-ui);
+  }
+  .field:focus { outline: none; border-color: var(--color-brand); box-shadow: 0 0 0 4px rgb(0 168 90 / 0.15); }
+  .field[aria-invalid="true"] { border-color: #b42318; }
+}
+
+/* Smoke puff used by the truck exhaust */
+@keyframes puff {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 0.55; }
+  100% { transform: translate(-60px, -40px) scale(2.4); opacity: 0; }
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes float-slow { 50% { transform: translateY(-10px); } }
+@keyframes scroll-cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+
+html.reduce-motion {
+  & *, & *::before, & *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Packing line: cement falling from the nozzle */
+@keyframes pc-fall {
+  0% { transform: translateY(0); opacity: 0.9; }
+  100% { transform: translateY(88px); opacity: 0.15; }
+}
+@keyframes pc-puff {
+  0%, 100% { transform: scale(0.8); opacity: 0.35; }
+  50% { transform: scale(1.15); opacity: 0.75; }
+}
+.pc-fall { animation: pc-fall 0.9s linear infinite; }
+.pc-puff { transform-box: fill-box; transform-origin: center; animation: pc-puff 1.2s ease-in-out infinite; }
