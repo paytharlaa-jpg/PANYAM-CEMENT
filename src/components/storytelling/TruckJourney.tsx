@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 import { PanyamTruck } from "@/components/illustrations/PanyamTruck";
 import { FarHills, MidLayer, RoadLayer, ForegroundLayer } from "@/components/illustrations/Landscape";
 import { company } from "@/data/company";
@@ -37,7 +37,7 @@ export function TruckJourney() {
 
         const tl = gsap.timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 1, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: SCRUB, invalidateOnRefresh: true },
         });
 
         // Parallax: each layer travels its own width — far is slowest, foreground fastest.
@@ -57,11 +57,13 @@ export function TruckJourney() {
           .to(q("[data-headlight]"), { opacity: 1, duration: 0.1 }, 0.82);
 
         // Sky and light through the day
+        // Sky colour fades repaint the whole screen each frame — desktop only (phones get a fixed daytime sky).
+        if (!desktop) gsap.set(root.current, { "--sky-top": skies[1][0], "--sky-bottom": skies[1][1], "--hill-far": skies[1][2], "--ground": skies[1][3] });
         skies.forEach((s, i) => {
-          if (i === 0) return;
+          if (i === 0 || !desktop) return;
           tl.to(root.current, { "--sky-top": s[0], "--sky-bottom": s[1], "--hill-far": s[2], "--ground": s[3], duration: 1 / (skies.length - 1) }, (i - 1) / (skies.length - 1));
         });
-        tl.to(q("[data-window]"), { fill: "#ffd76a", opacity: 1, duration: 0.08, stagger: { each: 0.0004, from: "random" } }, 0.88);
+        if (desktop) tl.to(q("[data-window]"), { fill: "#ffd76a", opacity: 1, duration: 0.08, stagger: { each: 0.0004, from: "random" } }, 0.88);
 
         // Captions
         const caps = q("[data-stop]");
@@ -127,7 +129,7 @@ export function TruckJourney() {
         <div className="container-x relative z-10 pt-24 lg:pt-28">
           <div className="relative max-w-[22rem] sm:max-w-sm lg:ml-auto lg:mr-[2vw] motion-safe:min-h-[11rem] motion-reduce:space-y-4">
             {stops.map((s, i) => (
-              <div key={s.title} data-stop className={`rounded-2xl bg-white/60 p-5 shadow-[0_20px_40px_-25px_rgb(6_38_26/0.4)] backdrop-blur-md motion-safe:absolute motion-safe:inset-x-0 motion-safe:top-0 ${i > 0 ? "motion-safe:invisible motion-safe:opacity-0" : ""}`}>
+              <div key={s.title} data-stop className={`rounded-2xl bg-white/60 p-5 max-lg:bg-white/90 shadow-[0_20px_40px_-25px_rgb(6_38_26/0.4)] backdrop-blur-md motion-safe:absolute motion-safe:inset-x-0 motion-safe:top-0 ${i > 0 ? "motion-safe:invisible motion-safe:opacity-0" : ""}`}>
                 <p className="eyebrow mb-2 text-[0.65rem] text-brand-night/70">{s.eyebrow}</p>
                 <p className="font-display text-2xl font-extrabold leading-[1.05] text-brand-night xl:text-3xl">
                   {s.title} <span className="story-italic block font-normal text-brand-deep">{s.italic}</span>

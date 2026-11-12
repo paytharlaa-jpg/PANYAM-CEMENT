@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 
 // A general description of dry-process cement manufacture (not plant-specific claims).
 const steps = [
@@ -21,7 +21,7 @@ export function ProcessFlow() {
       const q = gsap.utils.selector(root);
       const mm = gsap.matchMedia();
       mm.add(mq.motionOK, () => {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: q("ol")[0], start: "top 75%", end: "bottom 55%", scrub: 1 } });
+        const tl = gsap.timeline({ scrollTrigger: { trigger: q("ol")[0], start: "top 75%", end: "bottom 55%", scrub: SCRUB } });
         const wide = window.matchMedia("(min-width: 1024px)").matches;
         tl.fromTo(q("[data-line]"), wide ? { scaleX: 0 } : { scaleY: 0 }, { scaleX: 1, scaleY: 1, ease: "none", duration: 1 }, 0);
         q("[data-step]").forEach((s, i) => tl.from(s, { autoAlpha: 0.15, y: 20, duration: 0.15 }, (i / steps.length) * 0.9));

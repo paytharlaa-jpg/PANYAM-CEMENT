@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 import { PanyamMark } from "@/components/ui/PanyamMark";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { company } from "@/data/company";
@@ -19,7 +19,7 @@ export function FinaleScene() {
           const len = p.getTotalLength();
           gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
         });
-        gsap.timeline({ scrollTrigger: { trigger: root.current, start: "top 65%", end: "center center", scrub: 1 } })
+        gsap.timeline({ scrollTrigger: { trigger: root.current, start: "top 65%", end: "center center", scrub: SCRUB } })
           .from(q("[data-bg]"), { scale: 1.25, ease: "none", duration: 1 }, 0)
           .to(paths, { strokeDashoffset: 0, stagger: 0.1, duration: 0.5, ease: "none" }, 0)
           .from(q("[data-solid]"), { autoAlpha: 0, scale: 0.85, duration: 0.25 }, 0.5)

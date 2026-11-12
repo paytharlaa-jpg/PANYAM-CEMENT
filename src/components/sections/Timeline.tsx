@@ -13,7 +13,7 @@ export function Timeline() {
       mm.add(mq.motionOK, () => {
         gsap.fromTo(q("[data-spine]"), { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: { trigger: q("ol")[0], start: "top 70%", end: "bottom 60%", scrub: true } });
         q("[data-item]").forEach((el) => {
-          gsap.from(el, { autoAlpha: 0, x: 40, duration: 0.8, scrollTrigger: { trigger: el, start: "top 80%", once: true } });
+          gsap.from(el, { autoAlpha: 0, y: 30, duration: 0.8, scrollTrigger: { trigger: el, start: "top 80%", once: true } });
         });
       });
       return () => mm.revert();

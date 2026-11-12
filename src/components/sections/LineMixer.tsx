@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 
 /** Technical line drawing of a transit mixer, "drawn" left-to-right by scroll and rolling in. */
 export function LineMixer({ className = "" }: { className?: string }) {
@@ -10,7 +10,7 @@ export function LineMixer({ className = "" }: { className?: string }) {
     () => {
       const mm = gsap.matchMedia();
       mm.add(mq.motionOK, () => {
-        gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top 90%", end: "top 35%", scrub: 1 } })
+        gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top 90%", end: "top 35%", scrub: SCRUB } })
           .fromTo(ref.current!.querySelector("[data-draw]"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", ease: "none" }, 0)
           .fromTo(ref.current, { x: 120 }, { x: 0, ease: "power2.out" }, 0)
           .fromTo(ref.current!.querySelector("[data-pen]"), { left: "0%", autoAlpha: 1 }, { left: "100%", autoAlpha: 0, ease: "none" }, 0);

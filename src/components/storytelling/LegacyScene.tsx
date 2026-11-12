@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { PaintReveal } from "./PaintReveal";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 import { legacyProjects, institutionalClients } from "@/data/company";
 
 export function LegacyScene() {
@@ -18,7 +18,7 @@ export function LegacyScene() {
           gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
         });
         gsap.set(q("[data-wash]"), { opacity: 0 });
-        gsap.timeline({ scrollTrigger: { trigger: q("[data-art]")[0], start: "top 75%", end: "bottom 45%", scrub: 1 } })
+        gsap.timeline({ scrollTrigger: { trigger: q("[data-art]")[0], start: "top 75%", end: "bottom 45%", scrub: SCRUB } })
           .from(q("[data-pump]"), { xPercent: -25, autoAlpha: 0, duration: 0.25, ease: "power2.out" }, 0)
           .to(q("[data-brush=dab]"), { strokeDashoffset: 0, duration: 0.06, stagger: 0.02 }, 0.25)
           .to(q("[data-brush=sweep]"), { strokeDashoffset: 0, duration: 0.06, stagger: 0.015 }, 0.32)

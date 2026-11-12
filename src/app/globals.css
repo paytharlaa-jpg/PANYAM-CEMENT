@@ -38,6 +38,7 @@
 
 @layer base {
   html {
+    overflow-x: clip; /* never allow sideways scrolling on phones */
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
   }
@@ -186,3 +187,17 @@ html.reduce-motion {
 }
 .pc-fall { animation: pc-fall 0.9s linear infinite; }
 .pc-puff { transform-box: fill-box; transform-origin: center; animation: pc-puff 1.2s ease-in-out infinite; }
+
+/* ------------------------------------------------------------------
+   Phones & tablets: drop effects that repaint every scroll frame.
+   (Desktop keeps the full cinematic treatment.)
+------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  [data-rough] { filter: none !important; }       /* turbulence/displacement on masks */
+  .grain::before { display: none; }               /* full-screen blend-mode noise */
+  main *, header * {                              /* frosted glass → solid panels */
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  [data-drift], [data-media], [data-parallax] { will-change: auto; }
+}

@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 import { PackerMachine } from "@/components/illustrations/PackerMachine";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { products } from "@/data/products";
@@ -45,7 +45,7 @@ function FillingBag({ i }: { i: number }) {
         <mask id={`${id}-mask`} maskUnits="userSpaceOnUse" x="-100" y="-300" width={VB_W + 200} height={VB_H + 600}>
           <g data-level transform={`translate(0 ${VB_H + 140})`}>
             {/* cement heaps in the middle, granular edge */}
-            <path filter={`url(#${id}-grain)`} d={`M-80 ${VB_H + 300} V60 C120 30 280 -40 450 -55 C620 -40 780 30 ${VB_W + 80} 60 V${VB_H + 300} Z`} fill="#fff" />
+            <path data-rough filter={`url(#${id}-grain)`} d={`M-80 ${VB_H + 300} V60 C120 30 280 -40 450 -55 C620 -40 780 30 ${VB_W + 80} 60 V${VB_H + 300} Z`} fill="#fff" />
           </g>
         </mask>
       </defs>
@@ -89,7 +89,7 @@ export function PackingLine() {
 
         const tl = gsap.timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 1, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: SCRUB, invalidateOnRefresh: true },
         });
         tl.from(q("[data-copy] > *"), { y: 40, autoAlpha: 0, stagger: 0.15, duration: 0.6, ease: "power2.out" }, 0)
           .to(lines, { strokeDashoffset: 0, stagger: 0.1, duration: 1.5 }, 0)
@@ -144,13 +144,13 @@ export function PackingLine() {
         </svg>
 
         {/* Copy */}
-        <div className="container-x relative z-30 pt-24 lg:pt-32">
-          <div data-copy className="max-w-md max-sm:rounded-2xl max-sm:bg-paper/90 max-sm:p-4 max-sm:shadow-lg max-sm:backdrop-blur-md">
+        <div className="container-x relative z-30 pt-20 sm:pt-24 lg:pt-32">
+          <div data-copy className="max-w-md max-sm:rounded-2xl max-sm:bg-paper/95 max-sm:px-4 max-sm:py-3 max-sm:shadow-lg max-sm:backdrop-blur-md">
             <p className="eyebrow mb-3 text-brand-deep">The packing plant</p>
             <h2 id="packing-title" className="display-md text-charcoal">
               High-quality <span className="story-italic font-normal text-brand-deep">production.</span>
             </h2>
-            <p className="mt-4 text-sm text-slate sm:text-lg">
+            <p className="mt-4 hidden text-slate sm:block sm:text-lg">
               Our philosophy is simple — quality in every bag. Each batch is verified in our own laboratories before it is packed, and every bag is weighed on the packer.
             </p>
             <div className="mt-6 max-sm:hidden">

@@ -30,7 +30,7 @@ export function InvestorDocs({ docs }: { docs: InvestorDoc[] }) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[18rem_1fr]">
-      <div>
+      <div className="min-w-0">
         <label htmlFor="doc-search" className="sr-only">Search all documents</label>
         <div className="relative mb-4">
           <Search aria-hidden className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate" />
@@ -52,7 +52,7 @@ export function InvestorDocs({ docs }: { docs: InvestorDoc[] }) {
           ))}
         </div>
       </div>
-      <div id="doc-panel" role="tabpanel" aria-labelledby={query ? undefined : `tab-${cat}`} aria-label={query ? `Search results for ${query}` : undefined}>
+      <div id="doc-panel" className="min-w-0" role="tabpanel" aria-labelledby={query ? undefined : `tab-${cat}`} aria-label={query ? `Search results for ${query}` : undefined}>
         <p className="mb-4 text-sm text-slate" aria-live="polite">{list.length} document{list.length === 1 ? "" : "s"}{query ? ` matching “${query}”` : ""}</p>
         <ul className="divide-y divide-stone overflow-hidden rounded-3xl bg-white">
           {list.map((d) => (

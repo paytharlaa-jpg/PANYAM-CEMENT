@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 import { products } from "@/data/products";
 import { TiltBag } from "@/components/products/TiltBag";
 
@@ -22,7 +22,7 @@ export function ProductShowcase() {
         const distance = () => track.scrollWidth - window.innerWidth;
         const tl = gsap.timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 1, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: SCRUB, invalidateOnRefresh: true },
         });
         tl.to(track, { x: () => -distance(), duration: 1 }, 0);
         q("[data-panel]").forEach((panel, i) => {
@@ -62,24 +62,24 @@ export function ProductShowcase() {
             <article
               key={p.slug}
               data-panel
-              className="relative grid shrink-0 items-center gap-6 overflow-hidden rounded-3xl bg-white p-6 sm:grid-cols-[0.9fr_1.1fr] sm:p-10 lg:motion-safe:mr-[4vw] lg:motion-safe:h-[62svh] lg:motion-safe:min-h-[430px] lg:motion-safe:w-[64vw] lg:motion-safe:max-w-[1050px] lg:p-10 xl:p-14 lg:rounded-[2.5rem] lg:p-14"
+              className="relative grid shrink-0 grid-cols-[38%_1fr] items-center gap-4 overflow-hidden rounded-3xl bg-white p-4 sm:grid-cols-[0.9fr_1.1fr] sm:gap-6 sm:p-10 lg:motion-safe:mr-[4vw] lg:motion-safe:h-[62svh] lg:motion-safe:min-h-[430px] lg:motion-safe:w-[64vw] lg:motion-safe:max-w-[1050px] lg:p-10 xl:p-14 lg:rounded-[2.5rem] lg:p-14"
             >
-              <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full opacity-15 blur-3xl" style={{ background: p.accent }} />
-              <div data-bag className="relative mx-auto w-[62%] max-w-[300px] sm:w-full lg:max-w-[min(340px,38svh)]">
+              <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full opacity-15 blur-3xl max-lg:hidden" style={{ background: p.accent }} />
+              <div data-bag className="relative mx-auto w-full max-w-[300px] lg:max-w-[min(340px,38svh)]">
                 <TiltBag src={p.image} alt={`${p.name} ${p.shortType} cement bag`} width={p.imageWidth} height={p.imageHeight} sizes="(min-width: 1024px) 26vw, (min-width: 640px) 40vw, 60vw" />
               </div>
               <div data-copy className="relative">
-                <p className="eyebrow text-slate">0{i + 1} / 0{products.length} · {p.standard}</p>
-                <h3 className="mt-3 font-display text-4xl font-extrabold leading-none sm:text-5xl xl:text-6xl">{p.name}</h3>
-                <p className="mt-2 story-italic text-2xl text-brand-deep">{p.type}</p>
-                <p className="mt-5 max-w-md text-slate">{p.summary}</p>
-                <ul className="mt-5 flex flex-wrap gap-2 lg:[@media(max-height:860px)]:hidden">
+                <p className="eyebrow text-[0.62rem] text-slate sm:text-xs">0{i + 1} / 0{products.length} · {p.standard}</p>
+                <h3 className="mt-2 font-display text-2xl font-extrabold leading-none sm:mt-3 sm:text-5xl xl:text-6xl">{p.name}</h3>
+                <p className="mt-1 story-italic text-base leading-snug text-brand-deep sm:mt-2 sm:text-2xl">{p.type}</p>
+                <p className="mt-2 max-w-md text-sm text-slate sm:mt-5 sm:text-base">{p.summary}</p>
+                <ul className="mt-5 hidden flex-wrap gap-2 sm:flex lg:[@media(max-height:860px)]:hidden">
                   {p.idealFor.slice(0, 3).map((u) => (
                     <li key={u} className="rounded-full bg-paper px-3 py-1.5 text-sm font-semibold text-charcoal">{u}</li>
                   ))}
                 </ul>
-                <Link href={`/products/${p.slug}`} className="group mt-8 inline-flex min-h-12 items-center gap-3 font-bold text-brand-deep">
-                  <span className="link-underline">View {p.name}</span>
+                <Link href={`/products/${p.slug}`} className="group mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-brand-deep sm:mt-8 sm:gap-3 sm:text-base">
+                  <span className="link-underline"><span className="max-sm:hidden">View {p.name}</span><span className="sm:hidden">Details<span className="sr-only"> for {p.name}</span></span></span>
                   <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-deep text-white transition-transform duration-500 group-hover:rotate-45">
                     <ArrowUpRight aria-hidden className="h-4 w-4" />
                   </span>

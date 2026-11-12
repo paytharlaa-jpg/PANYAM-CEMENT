@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 import { PaintReveal } from "./PaintReveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
@@ -27,7 +27,7 @@ export function MixerScene() {
 
         const tl = gsap.timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 1, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: SCRUB, invalidateOnRefresh: true },
         });
         tl.from(q("[data-copy] > *"), { y: 40, autoAlpha: 0, stagger: 0.03, duration: 0.12, ease: "power2.out" }, 0)
           .fromTo(q("[data-site]"), { xPercent: 6 }, { xPercent: -6, duration: 1 }, 0)
@@ -72,7 +72,7 @@ export function MixerScene() {
 
         {/* copy */}
         <div className="container-x relative z-30 pt-24 lg:pt-32">
-          <div data-copy className="max-w-md rounded-3xl bg-paper/80 p-5 backdrop-blur-sm sm:p-6">
+          <div data-copy className="max-w-md rounded-3xl bg-paper/80 p-5 max-lg:bg-paper/95 backdrop-blur-sm sm:p-6">
             <p className="eyebrow mb-3 text-brand-deep">On site</p>
             <h2 id="mixer-title" className="display-md text-charcoal">
               From bag <span className="story-italic font-normal text-brand-deep">to building.</span>

@@ -32,6 +32,14 @@ export const prefersReducedMotion = () =>
 const ok = () => !prefersReducedMotion();
 const when = (query: string) => (ok() ? query : "not all");
 
+/**
+ * Scroll-scrub smoothing. Desktop gets 1s of catch-up easing (cinematic); phones and
+ * tablets already have native momentum scrolling, so scenes track the finger directly.
+ */
+export const SCRUB: true | number =
+  typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches ? true : 1;
+export const isCompact = () => typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches;
+
 /** Conditions for gsap.matchMedia — mirror the Tailwind breakpoints and the motion preference */
 export const mq = {
   get desktop() { return when("(min-width: 1024px)"); },

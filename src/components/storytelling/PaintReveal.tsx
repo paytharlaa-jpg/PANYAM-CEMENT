@@ -10,6 +10,8 @@ interface Props {
   /** Focal point (in image px) where the painter starts */
   focus: [number, number];
   className?: string;
+  /** tag so scenes can animate only the variant that is visible */
+  variant?: string;
 }
 
 /** Deterministic brush paths: dabs on the subject, then broad alternating sweeps. */
@@ -34,10 +36,10 @@ function strokes(w: number, h: number, [fx, fy]: [number, number]) {
   return { brush, dabs, sweeps, bristles };
 }
 
-export function PaintReveal({ src, width: w, height: h, id, focus, className }: Props) {
+export function PaintReveal({ src, width: w, height: h, id, focus, className, variant }: Props) {
   const { brush, dabs, sweeps, bristles } = strokes(w, h, focus);
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid slice" className={className} aria-hidden>
+    <svg data-variant={variant} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid slice" className={className} aria-hidden>
       <defs>
         <filter id={`${id}-rough`} x="-10%" y="-10%" width="120%" height="120%">
           <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="3" seed="7" result="noise" />
@@ -45,7 +47,7 @@ export function PaintReveal({ src, width: w, height: h, id, focus, className }: 
         </filter>
         <mask id={`${id}-mask`} maskUnits="userSpaceOnUse" x="0" y="0" width={w} height={h}>
           <rect width={w} height={h} fill="#000" />
-          <g filter={`url(#${id}-rough)`} fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round">
+          <g data-rough filter={`url(#${id}-rough)`} fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round">
             {dabs.map((d, i) => <path key={`d${i}`} data-brush="dab" d={d} strokeWidth={Math.round(brush * 1.1)} />)}
             {sweeps.map((d, i) => <path key={`s${i}`} data-brush="sweep" d={d} strokeWidth={brush} />)}
             {bristles.map((d, i) => <path key={`b${i}`} data-brush="sweep" d={d} strokeWidth={Math.round(brush * 0.12)} strokeOpacity="0.8" />)}

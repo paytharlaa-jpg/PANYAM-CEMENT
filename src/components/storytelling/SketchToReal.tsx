@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB, isCompact } from "@/animations/gsap";
 import { company } from "@/data/company";
 import { PaintReveal } from "./PaintReveal";
 
@@ -58,41 +58,52 @@ export function SketchToReal() {
           gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
         });
         gsap.set(q("[data-sketch]"), { "--reveal": "0%" });
-        const brushes = q<SVGPathElement>("[data-brush]");
+        // Only the visible painting (landscape on desktop, portrait on phones) is animated.
+        const compact = isCompact();
+        const v = compact ? "[data-variant=m]" : "[data-variant=d]";
+        const brushes = q<SVGPathElement>(`${v} [data-brush]`);
         brushes.forEach((p) => {
           const len = Math.ceil(p.getTotalLength()) + 2;
           gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
         });
-        gsap.set(q("[data-wash]"), { opacity: 0 });
+        gsap.set(q(`${v} [data-wash]`), { opacity: 0 });
         gsap.set(q("[data-photo-shade]"), { opacity: 0 });
-        gsap.set(q("[data-paint]"), { filter: "saturate(0.55) contrast(1.1)" });
+        if (!compact) gsap.set(q("[data-paint]"), { filter: "saturate(0.55) contrast(1.1)" });
+
+        // Phones: tighter pacing so something is always happening on screen.
+        const T = compact
+          ? { sketch: 0.02, sketchDur: 0.28, aOut: 0.32, bIn: 0.35, dab: 0.4, sweep: 0.44, stagger: 0.012, wash: 0.76, shade: 0.74, bOut: 0.8, cIn: 0.83 }
+          : { sketch: 0.3, sketchDur: 0.28, aOut: 0.52, bIn: 0.55, dab: 0.6, sweep: 0.66, stagger: 0.009, wash: 0.86, shade: 0.82, bOut: 0.84, cIn: 0.87 };
 
         const tl = gsap.timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 1 },
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: SCRUB },
         });
         tl.to(q("[data-copy=a]"), { autoAlpha: 1, duration: 0.03 }, 0)
           .to(q("[data-copy=a] > *"), { autoAlpha: 1, y: 0, stagger: 0.02, duration: 0.08, ease: "power2.out" }, 0)
           .to(paths, { strokeDashoffset: 0, duration: 0.3, stagger: 0.012 }, 0.02)
           .to(q("[data-label]"), { autoAlpha: 1, duration: 0.05, stagger: 0.02 }, 0.2)
           // pencil sweep
-          .to(q("[data-sketch]"), { "--reveal": "115%", duration: 0.28 }, 0.3)
-          .fromTo(q("[data-pencil]"), { left: "-5%", autoAlpha: 1 }, { left: "105%", duration: 0.28 }, 0.3)
-          .to(q("[data-pencil]"), { autoAlpha: 0, duration: 0.02 }, 0.58)
-          .to(q("[data-copy=a]"), { autoAlpha: 0, y: -30, duration: 0.06 }, 0.52)
-          .to(q("[data-copy=b]"), { autoAlpha: 1, duration: 0.03 }, 0.55)
-          .to(q("[data-copy=b] > *"), { autoAlpha: 1, y: 0, stagger: 0.02, duration: 0.08 }, 0.56)
+          .to(q("[data-sketch]"), { "--reveal": "115%", duration: T.sketchDur }, T.sketch)
+          .fromTo(q("[data-pencil]"), { left: "-5%", autoAlpha: 1 }, { left: "105%", duration: T.sketchDur }, T.sketch)
+          .to(q("[data-pencil]"), { autoAlpha: 0, duration: 0.02 }, T.sketch + T.sketchDur)
+          .to(q("[data-copy=a]"), { autoAlpha: 0, y: -30, duration: 0.06 }, T.aOut)
+          .to(q("[data-copy=b]"), { autoAlpha: 1, duration: 0.03 }, T.bIn)
+          .to(q("[data-copy=b] > *"), { autoAlpha: 1, y: 0, stagger: 0.02, duration: 0.08 }, T.bIn + 0.01)
           // the photograph is painted in: dabs on the tower, then broad sweeps
-          .to(q("[data-brush=dab]"), { strokeDashoffset: 0, duration: 0.05, stagger: 0.02, ease: "power1.inOut" }, 0.6)
-          .to(q("[data-brush=sweep]"), { strokeDashoffset: 0, duration: 0.05, stagger: 0.009, ease: "power1.inOut" }, 0.66)
-          .to(q("[data-wash]"), { opacity: 1, duration: 0.05 }, 0.86)
-          .to(q("[data-paint]"), { filter: "saturate(1) contrast(1)", duration: 0.2 }, 0.72)
-          .to(q("[data-photo-shade]"), { opacity: 1, duration: 0.08 }, 0.82)
+          .to(q(`${v} [data-brush=dab]`), { strokeDashoffset: 0, duration: 0.05, stagger: 0.02, ease: "power1.inOut" }, T.dab)
+          .to(q(`${v} [data-brush=sweep]`), { strokeDashoffset: 0, duration: 0.05, stagger: T.stagger, ease: "power1.inOut" }, T.sweep)
+          .to(q(`${v} [data-wash]`), { opacity: 1, duration: 0.05 }, T.wash)
+          .to(q("[data-photo-shade]"), { opacity: 1, duration: 0.08 }, T.shade)
           .to(q("[data-svg]"), { autoAlpha: 0, duration: 0.15 }, 0.7)
-          .to(q("[data-media]"), { scale: 1.06, duration: 0.4 }, 0.6)
-          .to(q("[data-copy=b]"), { autoAlpha: 0, y: -30, duration: 0.06 }, 0.84)
-          .to(q("[data-copy=c]"), { autoAlpha: 1, duration: 0.03 }, 0.87)
-          .to(q("[data-copy=c] > *"), { autoAlpha: 1, y: 0, stagger: 0.02, duration: 0.08 }, 0.88);
+          .to(q("[data-copy=b]"), { autoAlpha: 0, y: -30, duration: 0.06 }, T.bOut)
+          .to(q("[data-copy=c]"), { autoAlpha: 1, duration: 0.03 }, T.cIn)
+          .to(q("[data-copy=c] > *"), { autoAlpha: 1, y: 0, stagger: 0.02, duration: 0.08 }, T.cIn + 0.01);
+        // colour grading + camera push are desktop-only (they repaint the whole painting every frame)
+        if (!compact) {
+          tl.to(q("[data-paint]"), { filter: "saturate(1) contrast(1)", duration: 0.2 }, 0.72)
+            .to(q("[data-media]"), { scale: 1.06, duration: 0.4 }, 0.6);
+        }
       });
 
       mm.add(mq.reduced, () => {
@@ -107,7 +118,7 @@ export function SketchToReal() {
     <section
       ref={root}
       aria-labelledby="sketch-title"
-      className="relative bg-paper motion-safe:h-[420vh] max-sm:motion-safe:h-[340vh]"
+      className="relative bg-paper motion-safe:h-[420vh] max-sm:motion-safe:h-[300vh]"
     >
       <div className="sticky top-0 h-svh overflow-hidden motion-reduce:relative">
         <div data-media className="absolute inset-0 will-change-transform">
@@ -132,8 +143,8 @@ export function SketchToReal() {
           {/* 2 — photograph */}
           <div data-photo className="absolute inset-0" role="img" aria-label="Aerial photograph of the Panyam Cement plant and its preheater tower at golden hour">
             <div data-paint className="absolute inset-0">
-              <PaintReveal id="paint-d" src="/images/web/factory-aerial-dusk.webp" width={2560} height={1227} focus={[1560, 400]} className="absolute inset-0 hidden h-full w-full sm:block" />
-              <PaintReveal id="paint-m" src="/images/web/factory-portrait.webp" width={1080} height={1935} focus={[600, 480]} className="absolute inset-0 h-full w-full sm:hidden" />
+              <PaintReveal id="paint-d" src="/images/web/factory-aerial-dusk.webp" width={2560} height={1227} focus={[1560, 400]} variant="d" className="absolute inset-0 hidden h-full w-full sm:block" />
+              <PaintReveal id="paint-m" src="/images/web/factory-portrait.webp" width={1080} height={1935} focus={[600, 480]} variant="m" className="absolute inset-0 h-full w-full sm:hidden" />
             </div>
             <div data-photo-shade aria-hidden className="absolute inset-0 bg-gradient-to-t from-brand-night/85 via-brand-night/20 to-brand-night/40" />
           </div>
@@ -154,32 +165,32 @@ export function SketchToReal() {
         </div>
 
         {/* Narrative copy */}
-        <div className="container-x relative z-10 flex h-full items-start pt-28 lg:items-center lg:pt-0 motion-reduce:h-auto motion-reduce:py-24">
+        <div className="container-x relative z-10 flex h-full items-end pb-6 pt-24 sm:items-start sm:pb-0 sm:pt-28 lg:items-center lg:pt-0 motion-reduce:h-auto motion-reduce:py-24">
           <div className="relative w-full max-w-xl">
-            <div data-copy="a" className="rounded-3xl bg-paper/85 p-6 shadow-[0_30px_60px_-30px_rgb(6_38_26/0.35)] backdrop-blur-md sm:p-8 motion-safe:invisible motion-safe:absolute motion-safe:inset-x-0 motion-safe:top-0 motion-safe:opacity-0">
+            <div data-copy="a" className="rounded-3xl bg-paper/85 p-6 max-lg:bg-paper/95 shadow-[0_30px_60px_-30px_rgb(6_38_26/0.35)] backdrop-blur-md sm:p-8 motion-safe:invisible motion-safe:absolute motion-safe:inset-x-0 motion-safe:bottom-0 sm:motion-safe:bottom-auto sm:motion-safe:top-0 motion-safe:opacity-0">
               <p className="eyebrow mb-4 text-brand-deep opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">Chapter 01 · The blueprint</p>
               <h2 id="sketch-title" className="display-lg text-charcoal opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
                 Drawn in <span className="story-italic font-normal text-brand-deep">1955.</span>
               </h2>
-              <p className="mt-5 text-lg text-slate opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
+              <p className="mt-3 text-base text-slate sm:mt-5 sm:text-lg opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
                 Incorporated on {company.incorporated}, Panyam was planned to help build the infrastructure of a newly independent India — from one of the most backward regions of Rayalaseema.
               </p>
             </div>
-            <div data-copy="b" className="rounded-3xl bg-paper/85 p-6 shadow-[0_30px_60px_-30px_rgb(6_38_26/0.35)] backdrop-blur-md sm:p-8 motion-safe:invisible motion-safe:absolute motion-safe:inset-x-0 motion-safe:top-0 motion-safe:opacity-0 motion-reduce:mt-12">
+            <div data-copy="b" className="rounded-3xl bg-paper/85 p-6 max-lg:bg-paper/95 shadow-[0_30px_60px_-30px_rgb(6_38_26/0.35)] backdrop-blur-md sm:p-8 motion-safe:invisible motion-safe:absolute motion-safe:inset-x-0 motion-safe:bottom-0 sm:motion-safe:bottom-auto sm:motion-safe:top-0 motion-safe:opacity-0 motion-reduce:mt-12">
               <p className="eyebrow mb-4 text-brand-deep opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">Chapter 02 · Built to grow</p>
               <p className="display-md text-charcoal opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
                 From 200 to <span className="story-italic font-normal text-brand-deep">2,200 tonnes</span> a day.
               </p>
-              <p className="mt-5 text-lg text-slate opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
+              <p className="mt-3 text-base text-slate sm:mt-5 sm:text-lg opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
                 One kiln became three. Wet process became dry. By 1997 Panyam had grown into one of the largest cement manufacturing units in the country.
               </p>
             </div>
-            <div data-copy="c" className="rounded-3xl bg-brand-night/75 p-6 backdrop-blur-md sm:p-8 motion-safe:invisible motion-safe:absolute motion-safe:inset-x-0 motion-safe:top-0 motion-safe:opacity-0 motion-reduce:mt-12">
+            <div data-copy="c" className="rounded-3xl bg-brand-night/75 p-6 max-lg:bg-brand-night/90 backdrop-blur-md sm:p-8 motion-safe:invisible motion-safe:absolute motion-safe:inset-x-0 motion-safe:bottom-0 sm:motion-safe:bottom-auto sm:motion-safe:top-0 motion-safe:opacity-0 motion-reduce:mt-12">
               <p className="eyebrow mb-4 text-sun opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">Chapter 03 · Today</p>
               <p className="display-md text-white opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
                 Refurbished. <span className="story-italic font-normal text-sun">Re-energised.</span>
               </p>
-              <p className="mt-5 text-lg text-white/85 opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
+              <p className="mt-3 text-base text-white/85 sm:mt-5 sm:text-lg opacity-0 [transform:translateY(30px)] motion-reduce:opacity-100">
                 A completely refurbished plant with state-of-the-art kiln and coolers — {company.capacity.toLowerCase()} of installed capacity, with a second line in the pipeline.
               </p>
             </div>

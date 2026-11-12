@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
 import { products } from "@/data/products";
 import { company, labFacilities } from "@/data/company";
 
@@ -49,7 +49,7 @@ export function QualityScene() {
         q("[data-stratum]").forEach((el, i) => {
           gsap.to(el, { yPercent: -12 * (i + 1), ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true } });
         });
-        gsap.timeline({ scrollTrigger: { trigger: q("[data-lab]")[0], start: "top 75%", end: "bottom 60%", scrub: 1 } })
+        gsap.timeline({ scrollTrigger: { trigger: q("[data-lab]")[0], start: "top 75%", end: "bottom 60%", scrub: SCRUB } })
           .to(lines, { strokeDashoffset: 0, stagger: 0.05, ease: "none" });
 
         // strength bars + counters
