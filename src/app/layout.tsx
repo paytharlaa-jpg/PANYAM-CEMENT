@@ -9,9 +9,10 @@ import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { Preloader } from "@/components/layout/Preloader";
 import { organizationJsonLd, siteUrl } from "@/lib/seo";
 import { company } from "@/data/company";
-import { MotionNotice } from "@/components/ui/MotionToggle";
 
-const MOTION_SCRIPT = `try{var p=localStorage.getItem("pc-motion");if(p==="off"||(p!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches))document.documentElement.classList.add("reduce-motion");if(sessionStorage.getItem("pc-intro")==="1")document.documentElement.classList.add("intro-seen")}catch(e){}`;
+// Scroll-driven scenes play by default (they move only when the visitor scrolls). The footer switch
+// ("pc-motion" = "off") turns every animation off; the OS reduce-motion setting pauses self-running loops.
+const MOTION_SCRIPT = `try{var d=document.documentElement,p=localStorage.getItem("pc-motion");if(p==="off")d.classList.add("reduce-motion");else if(p!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("os-reduce");if(sessionStorage.getItem("pc-intro")==="1")document.documentElement.classList.add("intro-seen")}catch(e){}`;
 
 // Fonts are downloaded at build time and self-hosted as WOFF2 by next/font.
 const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap", axes: ["wdth"] });
@@ -54,7 +55,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main id="main">{children}</main>
           <Footer />
-          <MotionNotice />
         </SmoothScroll>
       </body>
     </html>

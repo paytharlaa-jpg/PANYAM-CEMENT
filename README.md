@@ -32,4 +32,4 @@ Copy `.env.example` to `.env.local` and fill in the email/CMS keys when availabl
 
 ## Animations & accessibility
 
-Animations follow the visitor's OS "reduce motion" setting. Anyone can switch them on or off with **Animations: On/Off** in the footer. If your computer has Windows *Animation effects* turned off, use that toggle to see the full cinematic experience.
+The scroll-driven scenes always play: they move only as the visitor scrolls. If the device asks for reduced motion (for example Windows *Animation effects* off), the self-running loops (hero camera drift, exhaust smoke, marquee, map pulse) pause. Anyone can switch every animation off with **Animations: On/Off** in the footer.

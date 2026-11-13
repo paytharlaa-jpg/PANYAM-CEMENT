@@ -29,6 +29,11 @@ export const MOTION_KEY = "pc-motion";
 export const prefersReducedMotion = () =>
   typeof document !== "undefined" && document.documentElement.classList.contains("reduce-motion");
 
+/** OS asks for less motion: keep scroll scenes, pause animations that run on their own. */
+export const osReducedMotion = () =>
+  typeof document !== "undefined" &&
+  (document.documentElement.classList.contains("os-reduce") || document.documentElement.classList.contains("reduce-motion"));
+
 const ok = () => !prefersReducedMotion();
 const when = (query: string) => (ok() ? query : "not all");
 

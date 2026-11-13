@@ -158,6 +158,9 @@ html.lenis, html.lenis body { height: auto; }
   .field[aria-invalid="true"] { border-color: #b42318; }
 }
 
+/* OS "reduce motion": pause decorative loops that play by themselves */
+html.os-reduce [class*="animate-[marquee"], html.os-reduce [class*="animate-[scroll-cue"] { animation: none !important; }
+
 /* Smoke puff used by the truck exhaust */
 @keyframes puff {
   0% { transform: translate(0, 0) scale(0.4); opacity: 0.55; }

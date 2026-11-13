@@ -1,7 +1,7 @@
 "use client";
 import { getImageProps } from "next/image";
 import { useRef } from "react";
-import { gsap, useGSAP, mq, motion, isCompact } from "@/animations/gsap";
+import { gsap, useGSAP, mq, motion, isCompact, osReducedMotion } from "@/animations/gsap";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { company } from "@/data/company";
 
@@ -54,7 +54,7 @@ export function HeroScene() {
         else window.addEventListener("pc:intro-done", play, { once: true });
 
         // Slow living camera drift on the still image
-        if (!isCompact()) gsap.to(q("[data-drift]"), { scale: 1.08, xPercent: -2, duration: 18, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        if (!isCompact() && !osReducedMotion()) gsap.to(q("[data-drift]"), { scale: 1.08, xPercent: -2, duration: 18, ease: "sine.inOut", yoyo: true, repeat: -1 });
 
         // Scroll-out: content lifts, image pushes in and darkens
         gsap.timeline({ scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true } })

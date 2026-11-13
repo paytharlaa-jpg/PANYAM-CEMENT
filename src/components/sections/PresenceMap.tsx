@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { gsap, useGSAP, mq } from "@/animations/gsap";
+import { gsap, useGSAP, mq, osReducedMotion } from "@/animations/gsap";
 
 // Schematic (not to scale): routes from the works at Cement Nagar to each state served.
 const plant = { x: 300, y: 250 };
@@ -29,7 +29,7 @@ export function PresenceMap() {
           .from(q("[data-plant]"), { scale: 0, transformOrigin: "center", duration: 0.6, ease: "back.out(2)" })
           .to(routes, { strokeDashoffset: 0, duration: 1, stagger: 0.12, ease: "power2.inOut" }, 0.3)
           .from(q("[data-node]"), { scale: 0, autoAlpha: 0, transformOrigin: "center", stagger: 0.12, duration: 0.5, ease: "back.out(2)" }, 0.9);
-        gsap.to(q("[data-pulse]"), { scale: 2.4, opacity: 0, duration: 1.8, repeat: -1, ease: "sine.out", transformOrigin: "center" });
+        if (!osReducedMotion()) gsap.to(q("[data-pulse]"), { scale: 2.4, opacity: 0, duration: 1.8, repeat: -1, ease: "sine.out", transformOrigin: "center" });
       });
       return () => mm.revert();
     },

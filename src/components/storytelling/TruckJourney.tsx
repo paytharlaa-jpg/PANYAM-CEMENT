@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB, osReducedMotion } from "@/animations/gsap";
 import { PanyamTruck } from "@/components/illustrations/PanyamTruck";
 import { FarHills, MidLayer, RoadLayer, ForegroundLayer } from "@/components/illustrations/Landscape";
 import { company } from "@/data/company";
@@ -77,7 +77,7 @@ export function TruckJourney() {
 
       // Continuous exhaust puffs (independent of scroll)
       mm.add(mq.motionOK, () => {
-        q("[data-smoke]").forEach((p, i) => {
+        if (!osReducedMotion()) q("[data-smoke]").forEach((p, i) => {
           gsap.fromTo(p, { opacity: 0.5, scale: 0.5, x: 0, y: 0, transformOrigin: "50% 50%" }, { opacity: 0, scale: 2.6, x: -50, y: -40, duration: 1.8, repeat: -1, delay: i * 0.6, ease: "sine.out" });
         });
       });

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRef } from "react";
-import { gsap, useGSAP, mq, SCRUB } from "@/animations/gsap";
+import { gsap, useGSAP, mq, SCRUB, osReducedMotion } from "@/animations/gsap";
 import { PaintReveal } from "./PaintReveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
@@ -45,7 +45,7 @@ export function MixerScene() {
           .to(q("[data-mixer]"), { x: () => vw() * 1.05, duration: 0.25, ease: "power2.in" }, 0.75)
           .to(q("[data-mixer-body]"), { y: -2, duration: 0.02, repeat: 11, yoyo: true }, 0.75);
 
-        q("[data-smoke]").forEach((p, i) => {
+        if (!osReducedMotion()) q("[data-smoke]").forEach((p, i) => {
           gsap.fromTo(p, { opacity: 0.45, scale: 0.4, x: 0, y: 0 }, { opacity: 0, scale: 2.2, x: -60, y: -50, duration: 1.8, repeat: -1, delay: i * 0.6, ease: "sine.out" });
         });
       });
